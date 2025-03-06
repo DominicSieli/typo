@@ -23,7 +23,7 @@ func Loop() {
 
 		if len(files) == 0 {
 			terminal.Clear()
-			fmt.Println("no files found")
+			fmt.Println("No files found")
 			os.Exit(0)
 		}
 
@@ -47,6 +47,13 @@ func Loop() {
 		Reset()
 
 		for true {
+			if index < len(text) - 1 && (text[index] == 10 || text[index] == 32 || text[index] == 9) {
+				scoreMap = append(scoreMap, true)
+				key = 0
+				index++
+				continue
+			}
+
 			render.RenderText(text, index, scoreMap, correct, incorrect)
 			key = input.RawInput()
 			key = input.TranslateEnterKey(key)

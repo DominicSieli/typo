@@ -6,15 +6,42 @@ import "typo/src/terminal"
 func RenderFileList(files []string, index int) {
 	terminal.Clear()
 
-	for i, v := range files {
+	end := 0
+	limit := 10
+	size := len(files)
+	start := (index / limit) * limit
+
+	if start + limit <= size {
+		end = start + limit - 1
+	}
+
+	if start + limit >= size {
+		end = size - 1
+	}
+
+	if start > 9 {
+		terminal.ColorPrintLine("grey", "<...")
+	}
+
+	for i := start; i <= end; i++ {
 		if i != index {
-			terminal.ColorPrintLine("grey", v)
+			terminal.ColorPrintLine("grey", files[i])
 		}
 
 		if i == index {
-			terminal.ColorPrintLine("cyan", v)
+			terminal.ColorPrintLine("cyan", files[i])
 		}
 	}
+
+	if end < size - 1 {
+		terminal.ColorPrintLine("grey", "...>")
+	}
+
+	fmt.Println()
+	terminal.ColorPrintLine("grey", "Move up: Up Arrow")
+	terminal.ColorPrintLine("grey", "Move down: Down Arrow")
+	terminal.ColorPrintLine("grey", "Exit Application: Left Arrow")
+	terminal.ColorPrintLine("grey", "Select file: Right Arrow")
 }
 
 func RenderText(text string, index int, scoreMap []bool, correct int, incorrect int) {
@@ -43,4 +70,6 @@ func RenderText(text string, index int, scoreMap []bool, correct int, incorrect 
 	fmt.Println()
 	fmt.Printf("%sCorrect: %d%s\n", terminal.GREEN, correct, terminal.RESET)
 	fmt.Printf("%sIncorrect: %d%s\n", terminal.RED, incorrect, terminal.RESET)
+	fmt.Println()
+	terminal.ColorPrintLine("grey", "Back to file select: Left Arrow")
 }

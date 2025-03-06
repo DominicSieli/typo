@@ -17,7 +17,7 @@ func ReadFile(fileName string) string {
 func PopulateFileList() []string {
 	var files []string
 	fileNames, err := os.ReadDir("./")
-	extensions := []string{".c",".h",".cpp",".cs",".zig",".txt",".go","js","ts","json","java","lua","md","py","html","css"}
+	extensions := []string{".c",".h",".cpp",".asm",".cs",".zig",".txt",".go",".js",".ts",".json",".java",".lua",".md",".py",".html",".css",".sh"}
 
 	if err != nil {
 		log.Fatal(err)
