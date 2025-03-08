@@ -44,25 +44,25 @@ func RenderFileList(files []string, index int) {
 	terminal.ColorPrintLine("grey", "Select file: Right Arrow")
 }
 
-func RenderText(text string, index int, scoreMap []bool, correct int, incorrect int) {
+func RenderText(text string, startIndex int, endIndex int, index int, scoreMap []bool, correct int, incorrect int) {
 	terminal.Clear()
 
-	for i, v := range text {
+	for i := startIndex; i <= endIndex; i++ {
 		if i == index {
-			terminal.ColorPrintCharacter("cyan", v)
+			terminal.ColorPrintCharacter("cyan", rune(text[i]))
 		}
 
 		if i > index {
-			terminal.ColorPrintCharacter("grey", v)
+			terminal.ColorPrintCharacter("grey", rune(text[i]))
 		}
 
 		if i < index {
 			if scoreMap[i] == true {
-				terminal.ColorPrintCharacter("green", v)
+				terminal.ColorPrintCharacter("green", rune(text[i]))
 			}
 
 			if scoreMap[i] == false {
-				terminal.ColorPrintCharacter("red", v)
+				terminal.ColorPrintCharacter("red", rune(text[i]))
 			}
 		}
 	}
