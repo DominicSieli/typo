@@ -99,14 +99,14 @@ func ScrollText() {
 		}
 	}
 
-	if key == 65 {
+	if key == 1 {
 		if startIndex > 0 {
 			endIndex--
 			startIndex--
 		}
 	}
 
-	if key == 66 {
+	if key == 2 {
 		if endIndex < len(endLines) - 1 {
 			endIndex++
 			startIndex++
@@ -137,13 +137,13 @@ func PopulateLines() {
 }
 
 func NavigateFileList() {
-	if key == 65 {
+	if key == 1 {
 		if index > 0 {
 			index--
 		}
 	}
 
-	if key == 66 {
+	if key == 2 {
 		if index < (len(files) - 1) {
 			index++
 		}
@@ -151,19 +151,21 @@ func NavigateFileList() {
 }
 
 func UpdateText() {
-	if index < len(text) - 1 {
-		if key == text[index] {
-			scoreMap = append(scoreMap, true)
-			index++
-			correct++
-			return
-		}
+	if key > 4 {
+		if index < len(text) - 1 {
+			if key == text[index] {
+				scoreMap = append(scoreMap, true)
+				index++
+				correct++
+				return
+			}
 
-		if key != text[index] {
-			scoreMap = append(scoreMap, false)
-			index++
-			incorrect++
-			return
+			if key != text[index] {
+				scoreMap = append(scoreMap, false)
+				index++
+				incorrect++
+				return
+			}
 		}
 	}
 }
