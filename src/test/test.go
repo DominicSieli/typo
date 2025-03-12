@@ -1,10 +1,7 @@
-package app
+package test
 
-import "os"
 import "fmt"
 import "typo/src/input"
-import "typo/src/fileio"
-import "typo/src/render"
 import "typo/src/actions"
 import "typo/src/terminal"
 
@@ -21,39 +18,13 @@ var endLines []int
 var startLines []int
 var lineLimit int = 10
 
-func Loop() {
+func Test(text string) {
 	for true {
-		Reset()
-		files = fileio.PopulateFileList()
-
-		if len(files) == 0 {
-			terminal.Clear()
-			fmt.Println("No files found")
-			os.Exit(0)
-		}
+		reset()
+		populateLines()
 
 		for true {
-			render.RenderFileList(files, index)
-			key = input.RawInput()
-			NavigateFileList()
-
-			if actions.Escape(key) {
-				terminal.Clear()
-				os.Exit(0)
-			}
-
-			if actions.Enter(key) {
-				file := files[index]
-				text = fileio.ReadFile(file)
-				break
-			}
-		}
-
-		Reset()
-		PopulateLines()
-
-		for true {
-			ScrollText()
+			scroll()
 
 			if index < len(text) - 1 && (text[index] == 10 || text[index] == 32 || text[index] == 9) {
 				scoreMap = append(scoreMap, true)
@@ -62,24 +33,24 @@ func Loop() {
 				continue
 			}
 
-			render.RenderText(text, startLines[startIndex], endLines[endIndex], index, scoreMap, correct, incorrect)
-			key = input.RawInput()
-			UpdateText()
+			render()
+			key = input.Input()
+			update()
 
 			if actions.Escape(key) {
 				break
 			}
 
 			if actions.Enter(key) {
-				Reset()
-				PopulateLines()
+				reset()
+				populateLines()
 				continue
 			}
 		}
 	}
 }
 
-func Reset() {
+func reset() {
 	key = 0
 	index = 0
 	correct = 0
@@ -91,7 +62,7 @@ func Reset() {
 	startLines = []int{}
 }
 
-func ScrollText() {
+func scroll() {
 	if text[index] == 10 {
 		if endIndex < len(endLines) - 1 {
 			endIndex++
@@ -114,7 +85,7 @@ func ScrollText() {
 	}
 }
 
-func PopulateLines() {
+func populateLines() {
 	startLines = append(startLines, 0)
 
 	for i := 0; i < len(text); i++ {
@@ -136,21 +107,7 @@ func PopulateLines() {
 	}
 }
 
-func NavigateFileList() {
-	if key == 1 {
-		if index > 0 {
-			index--
-		}
-	}
-
-	if key == 2 {
-		if index < (len(files) - 1) {
-			index++
-		}
-	}
-}
-
-func UpdateText() {
+func update() {
 	if key > 4 {
 		if index < len(text) - 1 {
 			if key == text[index] {
@@ -165,6 +122,34 @@ func UpdateText() {
 				index++
 				incorrect++
 				return
+			}
+		}
+	}
+}
+
+func render() {
+	terminal.Clear()
+
+	fmt.Printf("%sCorrect: %d%s\n", terminal.GREEN, correct, terminal.RESET)
+	fmt.Printf("%sIncorrect: %d%s\n", terminal.RED, incorrect, terminal.RESET)
+	fmt.Println()
+
+	for i := startIndex; i <= endIndex; i++ {
+		if i == index {
+			terminal.ColorPrintCharacter("cyan", rune(text[i]))
+		}
+
+		if i > index {
+			terminal.ColorPrintCharacter("grey", rune(text[i]))
+		}
+
+		if i < index {
+			if scoreMap[i] == true {
+				terminal.ColorPrintCharacter("green", rune(text[i]))
+			}
+
+			if scoreMap[i] == false {
+				terminal.ColorPrintCharacter("red", rune(text[i]))
 			}
 		}
 	}

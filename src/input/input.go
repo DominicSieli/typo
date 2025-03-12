@@ -3,7 +3,7 @@ package input
 import "os"
 import "golang.org/x/term"
 
-func RawInput() byte {
+func Input() byte {
 	var buffer [3]byte
 
 	oldState, error := term.MakeRaw(int(os.Stdin.Fd()))
