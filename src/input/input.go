@@ -3,21 +3,21 @@ package input
 import "os"
 import "golang.org/x/term"
 
-func Input() byte {
-	var buffer [3]byte
+func Key() byte {
+	buffer := [3]byte{}
 
-	oldState, error := term.MakeRaw(int(os.Stdin.Fd()))
+	oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 
-	if error != nil {
-		panic(error)
+	if err != nil {
+		panic(err)
 	}
 
 	defer term.Restore(int(os.Stdin.Fd()), oldState)
 
-	_, error = os.Stdin.Read(buffer[:])
+	_, err = os.Stdin.Read(buffer[:])
 
-	if error != nil {
-		panic(error)
+	if err != nil {
+		panic(err)
 	}
 
 	if buffer[0] == 0x1B && buffer[1] == 0x5B {

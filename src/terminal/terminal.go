@@ -3,6 +3,7 @@ package terminal
 import "os"
 import "fmt"
 import "os/exec"
+import "golang.org/x/term"
 
 const (
 	RESET = "\033[0m"
@@ -52,4 +53,16 @@ func ColorPrintCharacter(color string, character rune) {
 	}
 
 	fmt.Printf("%s%c%s", color, character, RESET)
+}
+
+func TerminalHeight() (int, error) {
+	fd := int(os.Stdout.Fd())
+
+	_, height, err := term.GetSize(fd)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return height - 2, nil
 }

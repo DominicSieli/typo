@@ -5,22 +5,22 @@ import "log"
 import "strings"
 
 func ReadFile(file string) string {
-	text, error := os.ReadFile(file)
+	text, err := os.ReadFile(file)
 
-	if error != nil {
-		log.Fatal(error)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return string(text)
 }
 
 func ReadFiles() []string {
-	var files []string
-	fileNames, error := os.ReadDir("./")
+	files := []string{}
+	fileNames, err := os.ReadDir("./")
 	extensions := []string{".c",".h",".cpp",".asm",".cs",".zig",".txt",".go",".js",".ts",".json",".java",".lua",".md",".py",".html",".css",".sh"}
 
-	if error != nil {
-		log.Fatal(error)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	for _, file := range fileNames {

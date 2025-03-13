@@ -5,136 +5,66 @@ import "typo/src/input"
 import "typo/src/actions"
 import "typo/src/terminal"
 
-var key byte
-var index int
-var text string
-var correct int
-var endIndex int
-var startIndex int
-var incorrect int
-var files []string
-var scoreMap []bool
-var endLines []int
-var startLines []int
-var lineLimit int = 10
-
 func Test(text string) {
+	index := 0
+	correct := 0
+	incorrect := 0
+	startIndex := 0
+	scoreMap := []bool{}
+
 	for true {
-		reset()
-		populateLines()
+		if (text[index] == 10 || text[index] == 32 || text[index] == 9) && index + 1 < len(text) {
+			index++
+			scoreMap = append(scoreMap, true)
+			continue
+		}
 
-		for true {
-			scroll()
+		render(index, startIndex, text, scoreMap, correct, incorrect)
+		key := input.Key()
+		// startIndex = actions.Scroll(key, startIndex, len(text))
 
-			if index < len(text) - 1 && (text[index] == 10 || text[index] == 32 || text[index] == 9) {
-				scoreMap = append(scoreMap, true)
+		if actions.Escape(key) {
+			break
+		}
+
+		if actions.Enter(key) {
+			key = 0
+			index = 0
+			correct = 0
+			incorrect = 0
+			startIndex = 0
+			scoreMap = []bool{}
+			continue
+		}
+
+		if key > 4 && index + 1 < len(text) {
+			if key == text[index] {
 				key = 0
 				index++
-				continue
-			}
-
-			render()
-			key = input.Input()
-			update()
-
-			if actions.Escape(key) {
-				break
-			}
-
-			if actions.Enter(key) {
-				reset()
-				populateLines()
-				continue
-			}
-		}
-	}
-}
-
-func reset() {
-	key = 0
-	index = 0
-	correct = 0
-	endIndex = 0
-	incorrect = 0
-	startIndex = 0
-	scoreMap = []bool{}
-	endLines = []int{}
-	startLines = []int{}
-}
-
-func scroll() {
-	if text[index] == 10 {
-		if endIndex < len(endLines) - 1 {
-			endIndex++
-			startIndex++
-		}
-	}
-
-	if key == 1 {
-		if startIndex > 0 {
-			endIndex--
-			startIndex--
-		}
-	}
-
-	if key == 2 {
-		if endIndex < len(endLines) - 1 {
-			endIndex++
-			startIndex++
-		}
-	}
-}
-
-func populateLines() {
-	startLines = append(startLines, 0)
-
-	for i := 0; i < len(text); i++ {
-		if text[i] == 10 {
-			endLines = append(endLines, i)
-
-			if i + 1 < len(text) {
-				startLines = append(startLines, i + 1)
-			}
-		}
-	}
-
-	if len(endLines) < lineLimit {
-		endIndex = len(endLines) - 1
-	}
-
-	if len(endLines) >= lineLimit {
-		endIndex = lineLimit - 1
-	}
-}
-
-func update() {
-	if key > 4 {
-		if index < len(text) - 1 {
-			if key == text[index] {
-				scoreMap = append(scoreMap, true)
-				index++
 				correct++
-				return
+				scoreMap = append(scoreMap, true)
+				continue
 			}
 
 			if key != text[index] {
-				scoreMap = append(scoreMap, false)
+				key = 0
 				index++
 				incorrect++
-				return
+				scoreMap = append(scoreMap, false)
+				continue
 			}
 		}
 	}
 }
 
-func render() {
+func render(index int, startIndex int, text string, scoreMap []bool, correct int, incorrect int) {
 	terminal.Clear()
 
 	fmt.Printf("%sCorrect: %d%s\n", terminal.GREEN, correct, terminal.RESET)
 	fmt.Printf("%sIncorrect: %d%s\n", terminal.RED, incorrect, terminal.RESET)
 	fmt.Println()
 
-	for i := startIndex; i <= endIndex; i++ {
+	for i := startIndex; i < len(text); i++ {
 		if i == index {
 			terminal.ColorPrintCharacter("cyan", rune(text[i]))
 		}
