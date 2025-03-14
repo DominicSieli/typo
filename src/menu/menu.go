@@ -2,6 +2,7 @@ package menu
 
 import "os"
 import "fmt"
+import "time"
 import "typo/src/input"
 import "typo/src/fileio"
 import "typo/src/actions"
@@ -14,7 +15,7 @@ func Menu() string {
 
 	if len(files) == 0 {
 		terminal.Clear()
-		fmt.Println("No files found")
+		terminal.ColorPrintLine("red", "[NO FILES FOUND]")
 		fmt.Print(terminal.UNHIDE_CURSOR)
 		os.Exit(0)
 	}
@@ -22,7 +23,7 @@ func Menu() string {
 	for true {
 		render(index, files)
 		key := input.Key()
-		index = actions.Scroll(key, index, len(files))
+		index = scroll(key, index, len(files))
 
 		if actions.Escape(key) {
 			terminal.Clear()
@@ -35,10 +36,11 @@ func Menu() string {
 			text = fileio.ReadFile(file)
 
 			if len(text) == 0 {
+				index = 0
 				terminal.Clear()
-				fmt.Println("This file is empty")
-				fmt.Print(terminal.UNHIDE_CURSOR)
-				os.Exit(0)
+				terminal.ColorPrintLine("red", "[THIS FILE IS EMPTY]")
+				time.Sleep(time.Duration(3) * time.Second)
+				continue
 			}
 
 			return text
@@ -46,6 +48,18 @@ func Menu() string {
 	}
 
 	return text
+}
+
+func scroll(key byte, index int, size int) int {
+	if actions.Up(key) && index > 0 {
+		index--
+	}
+
+	if actions.Down(key) && index + 1 < size {
+		index++
+	}
+
+	return index
 }
 
 func render(index int, files []string) {
