@@ -16,7 +16,7 @@ func Test(text string) {
 	startLines := []int{}
 
 	startLines = append(startLines, 0)
-	lineLimit, err := terminal.TerminalHeight()
+	_, lineLimit, err := terminal.TerminalSize()
 
 	if err != nil {
 		panic(err)
@@ -42,9 +42,9 @@ func Test(text string) {
 
 	for true {
 		if (text[index] == 10 || text[index] == 32 || text[index] == 9) && index + 1 < len(text) {
-			if text[index] == 10 && startIndex + lineLimit + 1 < len(startLines) {
-				startIndex++
+			if text[index] == 10 && startIndex + lineLimit < len(startLines) {
 				endIndex++
+				startIndex++
 			}
 
 			index++

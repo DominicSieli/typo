@@ -55,14 +55,14 @@ func ColorPrintCharacter(color string, character rune) {
 	fmt.Printf("%s%c%s", color, character, RESET)
 }
 
-func TerminalHeight() (int, error) {
+func TerminalSize() (int, int, error) {
 	fd := int(os.Stdout.Fd())
 
-	_, height, err := term.GetSize(fd)
+	width, height, err := term.GetSize(fd)
 
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
-	return height - 2, nil
+	return width, height, nil
 }

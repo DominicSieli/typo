@@ -65,25 +65,24 @@ func scroll(key byte, index int, size int) int {
 func render(index int, files []string) {
 	end := 0
 	size := len(files)
-	limit, err := terminal.TerminalHeight()
+
+	terminal.Clear()
+
+	_, height, err := terminal.TerminalSize()
 
 	if err != nil {
 		panic(err)
 	}
 
-	start := (index / limit) * limit
-
-	terminal.Clear()
-
-	if start + limit < size {
-		end = start + limit - 1
+	if index + height <= size {
+		end = index + height - 2
 	}
 
-	if start + limit >= size {
-		end = size - 1
+	if index + height > size {
+		end = size
 	}
 
-	for i := start; i <= end; i++ {
+	for i := index; i < end; i++ {
 		if i != index {
 			terminal.ColorPrintLine("grey", files[i])
 		}
