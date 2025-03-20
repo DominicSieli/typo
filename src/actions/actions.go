@@ -9,9 +9,9 @@ func Down(key byte) bool {
 }
 
 func Enter(key byte) bool {
-	return key == 13
+	return key == 3 || key == 13
 }
 
 func Escape(key byte) bool {
-	return key == 27
+	return key == 4 || key == 27
 }

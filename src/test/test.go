@@ -12,8 +12,8 @@ func Test(text string) {
 	incorrect := 0
 	startIndex := 0
 	endLines := []int{}
-	scoreMap := []bool{}
 	startLines := []int{}
+	scoreMap := map[byte]int{}
 
 	startLines = append(startLines, 0)
 	_, lineLimit, err := terminal.TerminalSize()
@@ -22,7 +22,7 @@ func Test(text string) {
 		panic(err)
 	}
 
-	lineLimit = lineLimit - 4
+	lineLimit = lineLimit - 6
 
 	for i := range text {
 		if text[i] == 10 || i + 1 >= len(text) {
@@ -48,7 +48,6 @@ func Test(text string) {
 			}
 
 			index++
-			scoreMap = append(scoreMap, true)
 			continue
 		}
 
@@ -69,8 +68,8 @@ func Test(text string) {
 			correct = 0
 			incorrect = 0
 			startIndex = 0
-			scoreMap = []bool{}
 			endIndex = lineLimit - 1
+			scoreMap = map[byte]int{}
 			continue
 		}
 
@@ -79,16 +78,22 @@ func Test(text string) {
 				key = 0
 				index++
 				correct++
-				scoreMap = append(scoreMap, true)
 				continue
 			}
 
 			if key != text[index] {
 				key = 0
-				index++
 				incorrect++
-				scoreMap = append(scoreMap, false)
-				continue
+
+				if _, k := scoreMap[text[index]]; !k {
+					scoreMap[text[index]] = 1
+					continue
+				}
+
+				if v, k := scoreMap[text[index]]; k {
+					scoreMap[text[index]] = v + 1
+					continue
+				}
 			}
 		}
 	}
@@ -108,30 +113,30 @@ func scroll(key byte, startIndex int, endIndex int, size int) (int, int) {
 	return startIndex, endIndex
 }
 
-func render(index int, startIndex int, endIndex int, text string, scoreMap []bool, correct int, incorrect int) {
+func render(index int, startIndex int, endIndex int, text string, scoreMap map[byte]int, correct int, incorrect int) {
 	terminal.Clear()
 
 	fmt.Printf("%sCorrect: %d%s\n", terminal.GREEN, correct, terminal.RESET)
 	fmt.Printf("%sIncorrect: %d%s\n", terminal.RED, incorrect, terminal.RESET)
+
+	for key, value := range scoreMap {
+		fmt.Printf(terminal.RED + "[%c:%d]" + terminal.RESET, rune(key), value)
+	}
+
+	fmt.Println()
 	fmt.Println()
 
 	for i := startIndex; i <= endIndex; i++ {
+		if i < index {
+			terminal.ColorPrintCharacter("green", rune(text[i]))
+		}
+
 		if i == index {
 			terminal.ColorPrintCharacter("cyan", rune(text[i]))
 		}
 
 		if i > index {
 			terminal.ColorPrintCharacter("grey", rune(text[i]))
-		}
-
-		if i < index {
-			if scoreMap[i] == true {
-				terminal.ColorPrintCharacter("green", rune(text[i]))
-			}
-
-			if scoreMap[i] == false {
-				terminal.ColorPrintCharacter("red", rune(text[i]))
-			}
 		}
 	}
 }
