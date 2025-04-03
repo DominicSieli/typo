@@ -1,9 +1,9 @@
 package test
 
 import "fmt"
-import "typo/src/input"
-import "typo/src/actions"
-import "typo/src/terminal"
+import "typo/internal/input"
+import "typo/internal/actions"
+import "typo/internal/terminal"
 
 func Test(text string) {
 	index := 0

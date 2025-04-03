@@ -1,8 +1,8 @@
 package main
 
-import "typo/src/menu"
-import "typo/src/test"
-import "typo/src/terminal"
+import "typo/internal/menu"
+import "typo/internal/test"
+import "typo/internal/terminal"
 
 func main() {
 	terminal.Clear()

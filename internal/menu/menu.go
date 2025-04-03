@@ -3,10 +3,10 @@ package menu
 import "os"
 import "fmt"
 import "time"
-import "typo/src/input"
-import "typo/src/fileio"
-import "typo/src/actions"
-import "typo/src/terminal"
+import "typo/internal/input"
+import "typo/internal/fileio"
+import "typo/internal/actions"
+import "typo/internal/terminal"
 
 func Menu() string {
 	text := ""
